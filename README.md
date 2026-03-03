@@ -7,12 +7,12 @@ A high-performance, modular Auction House plugin for Minecraft **1.21.1+ (Paper/
 
 ## 🚀 Key Features
 - **Auto-Category Detection:** Items are automatically filtered into categories (Armor, Tools, Spawners, Shulker Boxes, etc.).
-- **Claim Blocks Trading:** Integration with [GriefPrevention](https://github.com) to sell/buy bonus claim blocks directly in the AH.
+- **Claim Blocks Trading:** Integration with GriefPrevention to sell/buy bonus claim blocks directly in the AH.
 - **Permanent Protection Listing:** Claim block listings never expire, ensuring steady market availability.
 - **Search System:** Real-time item filtering via chat by Name or ID without closing the main flow.
 - **Transaction History:** Dedicated GUIs for Sold, Purchased, and Expired items.
 - **Discord Integration:** Real-time Webhook announcements for listings, sales, and administrative reloads.
-- **Economy Integration:** Full support for [Vault](https://www.spigotmc.org).
+- **Economy Integration:** Full support for Vault
 
 ## 🛠️ Commands & Permissions
 
@@ -30,7 +30,7 @@ A high-performance, modular Auction House plugin for Minecraft **1.21.1+ (Paper/
 | `/ah remove <player>` | Safely moves a player's active auctions to expired | `ah.admin` |
 
 ## 📦 Installation
-1. Ensure you have [Vault](https://www.spigotmc.org) and [GriefPrevention](https://github.com) installed.
+1. Ensure you have Vault and GriefPrevention installed.
 2. Drop `AH-1.0.jar` into your `/plugins` folder.
 3. Configure your Discord Webhook in `config.yml`.
 4. Restart your server.
