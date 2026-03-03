@@ -5,9 +5,8 @@ import com.comonier.ah.managers.*;
 import com.comonier.ah.menus.*;
 import com.comonier.ah.models.AuctionItem;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.*;
+import org.bukkit.event.inventory.*;
 import java.util.List;
 
 public class AuctionListener implements Listener {
@@ -21,41 +20,64 @@ public class AuctionListener implements Listener {
         this.mm = plugin.getMessageManager();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
         String title = event.getView().getTitle();
-        if (!title.contains("AH") && !title.contains("Auction") && !title.contains("Leilão")) return;
+        if (!title.contains("Auction") && !title.contains("AH") && !title.contains("Leilão")) return;
         event.setCancelled(true);
+        if (!(event.getWhoClicked() instanceof Player)) return;
         Player p = (Player) event.getWhoClicked();
         int slot = event.getRawSlot();
+        if (slot < 0 || slot >= event.getInventory().getSize()) return;
 
         if (slot == 49) { categoryMenu.open(p); return; }
-        if (slot == 13) { openActive(p, "Todos", plugin.getAuctionManager().getActiveAuctions()); return; }
+        if (slot == 13) { new ActiveAuctionsMenu(plugin).open(p, 1, plugin.getAuctionManager().getActiveAuctions(), "Todos"); return; }
         handleCategoryClick(p, slot);
         handleNav(p, slot);
+        if (title.contains("[") && slot < 45) handlePurchase(p, slot);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onInventoryDrag(InventoryDragEvent e) {
+        if (e.getView().getTitle().contains("AH")) e.setCancelled(true);
+    }
+
+    private void handlePurchase(Player p, int slot) {
+        List<AuctionItem> items = plugin.getAuctionManager().getActiveAuctions();
+        if (slot >= items.size()) return;
+        AuctionItem a = items.get(slot);
+        if (!plugin.getEconomyManager().hasMoney(p.getUniqueId(), a.getPrice())) return;
+
+        plugin.getEconomyManager().withdraw(p.getUniqueId(), a.getPrice());
+        plugin.getEconomyManager().deposit(a.getSellerUUID(), a.getPrice());
+        plugin.getSoldManager().recordSale(a.getSellerUUID(), a);
+        plugin.getPurchaseManager().recordPurchase(p.getUniqueId(), a);
+        p.getInventory().addItem(a.getItemStack());
+        plugin.getAuctionManager().removeItem(a);
+        p.closeInventory();
+
+        String itemN = a.getItemStack().getType().name();
+        plugin.getWebhookManager().announce("&f" + p.getName() + " &ecomprou &f" + itemN + " &ede &f" + a.getSellerName(), 
+            ":moneybag: " + p.getName() + " comprou " + itemN + " de " + a.getSellerName());
     }
 
     private void handleCategoryClick(Player p, int slot) {
-        String cat = null;
-        if (slot == 19) cat = "cat-cash"; if (slot == 20) cat = "cat-keys";
-        if (slot == 21) cat = "cat-protection"; if (slot == 22) cat = "cat-blocks";
-        if (slot == 23) cat = "cat-items"; if (slot == 24) cat = "cat-tools";
-        if (slot == 25) cat = "cat-armor"; if (slot == 28) cat = "cat-food";
-        if (slot == 29) cat = "cat-books"; if (slot == 30) cat = "cat-spawners";
-        if (slot == 31) cat = "cat-drops"; if (slot == 32) cat = "cat-shulker";
-        if (slot == 33) cat = "cat-farm"; if (slot == 34) cat = "cat-ores";
-        if (cat != null) openActive(p, mm.getMessage(cat), plugin.getAuctionManager().getByCategory(cat));
+        String c = null;
+        if (slot == 19) c = "cat-cash"; if (slot == 20) c = "cat-keys";
+        if (slot == 21) c = "cat-protection"; if (slot == 22) c = "cat-blocks";
+        if (slot == 23) c = "cat-items"; if (slot == 24) c = "cat-tools";
+        if (slot == 25) c = "cat-armor"; if (slot == 28) c = "cat-food";
+        if (slot == 29) c = "cat-books"; if (slot == 30) c = "cat-spawners";
+        if (slot == 31) c = "cat-drops"; if (slot == 32) c = "cat-shulker";
+        if (slot == 33) c = "cat-farm"; if (slot == 34) c = "cat-ores";
+        if (c != null) new ActiveAuctionsMenu(plugin).open(p, 1, plugin.getAuctionManager().getByCategory(c), mm.getMessage(c));
     }
 
     private void handleNav(Player p, int slot) {
-        HistoryMenu history = new HistoryMenu(plugin);
-        if (slot == 45) history.open(p, mm.getMessage("menu-sales"), 1, plugin.getSoldManager().getSoldItems(p.getUniqueId()));
-        if (slot == 47) history.open(p, mm.getMessage("menu-purchases"), 1, plugin.getPurchaseManager().getPurchasedItems(p.getUniqueId()));
+        HistoryMenu h = new HistoryMenu(plugin);
+        if (slot == 45) h.open(p, mm.getMessage("menu-sales"), 1, plugin.getSoldManager().getSoldItems(p.getUniqueId()));
+        if (slot == 47) h.open(p, mm.getMessage("menu-purchases"), 1, plugin.getPurchaseManager().getPurchasedItems(p.getUniqueId()));
         if (slot == 51) { p.closeInventory(); plugin.getSearchManager().startSearch(p); }
-        if (slot == 53) history.open(p, mm.getMessage("menu-expired"), 1, plugin.getExpiredManager().getExpiredItems(p.getUniqueId()));
-    }
-
-    private void openActive(Player p, String name, List<AuctionItem> list) {
-        new ActiveAuctionsMenu(plugin).open(p, 1, list, name);
+        if (slot == 53) h.open(p, mm.getMessage("menu-expired"), 1, plugin.getExpiredManager().getExpiredItems(p.getUniqueId()));
     }
 }

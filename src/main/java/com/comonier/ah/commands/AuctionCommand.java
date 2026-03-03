@@ -3,13 +3,10 @@ package com.comonier.ah.commands;
 import com.comonier.ah.AH;
 import com.comonier.ah.managers.*;
 import com.comonier.ah.menus.*;
-import com.comonier.ah.models.AuctionItem;
 import org.bukkit.Material;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AuctionCommand implements CommandExecutor {
     private final AH plugin;
@@ -27,16 +24,9 @@ public class AuctionCommand implements CommandExecutor {
         if (!(sender instanceof Player)) { sender.sendMessage(mm.getMessage("only-players")); return true; }
         Player p = (Player) sender;
         if (args.length == 0) { categoryMenu.open(p); return true; }
-
         String sub = args[0].toLowerCase();
-        switch (sub) {
-            case "sell": handleSell(p, args); break;
-            case "sales": 
-            case "purchase": 
-            case "expired": 
-            case "active": handleMenus(p, sub); break;
-            default: sendHelp(p); break;
-        }
+        if (sub.equals("sell")) { handleSell(p, args); return true; }
+        handleMenus(p, sub);
         return true;
     }
 
@@ -50,27 +40,18 @@ public class AuctionCommand implements CommandExecutor {
             plugin.getAuctionManager().listItem(p.getUniqueId(), item.clone(), price);
             p.getInventory().setItemInMainHand(null);
             p.sendMessage(mm.getPrefix() + mm.getMessage("item-added"));
+            
+            String name = item.getType().name();
+            plugin.getWebhookManager().announce("&f" + p.getName() + " &eanunciou &f" + name + " &epor &a$" + price, 
+                ":shopping_cart: " + p.getName() + " anunciou " + name + " por $" + price);
         } catch (NumberFormatException e) { p.sendMessage(mm.getPrefix() + mm.getMessage("invalid-price")); }
     }
 
     private void handleMenus(Player p, String sub) {
-        HistoryMenu history = new HistoryMenu(plugin);
-        if (sub.equals("sales")) history.open(p, mm.getMessage("menu-sales"), 1, plugin.getSoldManager().getSoldItems(p.getUniqueId()));
-        if (sub.equals("purchase")) history.open(p, mm.getMessage("menu-purchases"), 1, plugin.getPurchaseManager().getPurchasedItems(p.getUniqueId()));
-        if (sub.equals("expired")) history.open(p, mm.getMessage("menu-expired"), 1, plugin.getExpiredManager().getExpiredItems(p.getUniqueId()));
-        if (sub.equals("active")) {
-            List<AuctionItem> myItems = new ArrayList<>();
-            for (AuctionItem i : plugin.getAuctionManager().getActiveAuctions()) if (i.getSellerUUID().equals(p.getUniqueId())) myItems.add(i);
-            new ActiveAuctionsMenu(plugin).open(p, 1, myItems, "Meus Leilões");
-        }
-    }
-
-    private void sendHelp(Player p) {
-        p.sendMessage("§e---- [ AH - Ajuda ] ----");
-        p.sendMessage("§f/ah §7- Abre o menu principal");
-        p.sendMessage("§f/ah sell <preço> §7- Vende o item da mão");
-        p.sendMessage("§f/ah active §7- Seus leilões ativos");
-        p.sendMessage("§f/ah expired §7- Itens expirados/cancelados");
-        p.sendMessage("§f/ah sales/purchase §7- Históricos de transações");
+        HistoryMenu h = new HistoryMenu(plugin);
+        if (sub.equals("sales")) h.open(p, mm.getMessage("menu-sales"), 1, plugin.getSoldManager().getSoldItems(p.getUniqueId()));
+        if (sub.equals("purchase")) h.open(p, mm.getMessage("menu-purchases"), 1, plugin.getPurchaseManager().getPurchasedItems(p.getUniqueId()));
+        if (sub.equals("expired")) h.open(p, mm.getMessage("menu-expired"), 1, plugin.getExpiredManager().getExpiredItems(p.getUniqueId()));
+        if (sub.equals("active")) p.performCommand("ah");
     }
 }

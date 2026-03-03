@@ -19,6 +19,7 @@ public class AH extends JavaPlugin {
     private SoldManager soldManager;
     private PurchaseManager purchaseManager;
     private ExpiredManager expiredManager;
+    private WebhookManager webhookManager;
     private CategoryMenu categoryMenu;
 
     @Override
@@ -34,11 +35,11 @@ public class AH extends JavaPlugin {
         this.soldManager = new SoldManager(this);
         this.purchaseManager = new PurchaseManager(this);
         this.expiredManager = new ExpiredManager(this);
+        this.webhookManager = new WebhookManager(this);
         this.auctionManager = new AuctionManager(this);
         this.taskManager = new TaskManager(this);
         this.categoryMenu = new CategoryMenu(menuManager, messageManager);
-        AuctionCommand auCmd = new AuctionCommand(this, categoryMenu);
-        getCommand("ah").setExecutor(auCmd);
+        getCommand("ah").setExecutor(new AuctionCommand(this, categoryMenu));
         getCommand("ah").setTabCompleter(new AuctionTabCompleter());
         getServer().getPluginManager().registerEvents(new AuctionListener(this, categoryMenu, searchManager), this);
         getServer().getPluginManager().registerEvents(new SearchListener(searchManager), this);
@@ -53,8 +54,8 @@ public class AH extends JavaPlugin {
 
     private void loadLanguageFiles() {
         for (String lang : new String[]{"en", "pt"}) {
-            String file = "messages_" + lang + ".yml";
-            if (!(new File(getDataFolder(), file)).exists()) saveResource(file, false);
+            String f = "messages_" + lang + ".yml";
+            if (!(new File(getDataFolder(), f)).exists()) saveResource(f, false);
         }
     }
 
@@ -67,4 +68,5 @@ public class AH extends JavaPlugin {
     public SoldManager getSoldManager() { return soldManager; }
     public PurchaseManager getPurchaseManager() { return purchaseManager; }
     public ExpiredManager getExpiredManager() { return expiredManager; }
+    public WebhookManager getWebhookManager() { return webhookManager; }
 }
