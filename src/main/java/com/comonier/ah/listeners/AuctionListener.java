@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
 import org.bukkit.event.inventory.*;
+import org.bukkit.ChatColor;
 import java.util.List;
 public class AuctionListener implements Listener {
     private final AH plugin;
@@ -41,9 +42,10 @@ public class AuctionListener implements Listener {
         List<AuctionItem> expired = plugin.getExpiredManager().getExpiredItems(p.getUniqueId());
         if (slot >= expired.size()) return;
         AuctionItem item = expired.get(slot);
-        if (item.getItemStack().getType() == Material.GOLDEN_SHOVEL && item.getCategory().equals("cat-protection")) {
-            String name = item.getItemStack().getItemMeta().getDisplayName().replaceAll("[^0-9]", "");
-            plugin.getClaimBlockManager().addBonusBlocks(p.getUniqueId(), Integer.parseInt(name));
+        if (item.getCategory().equals("cat-protection")) {
+            String rawName = ChatColor.stripColor(item.getItemStack().getItemMeta().getDisplayName());
+            String val = rawName.split(" ")[0];
+            plugin.getClaimBlockManager().addBonusBlocks(p.getUniqueId(), Integer.parseInt(val));
         } else { p.getInventory().addItem(item.getItemStack()); }
         plugin.getExpiredManager().removeSpecificExpired(p.getUniqueId(), slot);
         p.closeInventory();
@@ -71,8 +73,9 @@ public class AuctionListener implements Listener {
         plugin.getSoldManager().recordSale(a.getSellerUUID(), a);
         plugin.getPurchaseManager().recordPurchase(p.getUniqueId(), a);
         String itemName = a.getItemStack().hasItemMeta() && a.getItemStack().getItemMeta().hasDisplayName() ? a.getItemStack().getItemMeta().getDisplayName() : a.getItemStack().getType().name();
-        if (a.getItemStack().getType() == Material.GOLDEN_SHOVEL && a.getCategory().equals("cat-protection")) {
-            String val = itemName.replaceAll("[^0-9]", "");
+        if (a.getCategory().equals("cat-protection")) {
+            String rawName = ChatColor.stripColor(itemName);
+            String val = rawName.split(" ")[0];
             plugin.getClaimBlockManager().addBonusBlocks(p.getUniqueId(), Integer.parseInt(val));
         } else { p.getInventory().addItem(a.getItemStack()); }
         plugin.getAuctionManager().removeItem(a);

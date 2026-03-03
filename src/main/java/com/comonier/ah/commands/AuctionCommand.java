@@ -41,39 +41,39 @@ public class AuctionCommand implements CommandExecutor {
         if (sender.hasPermission("ah.admin") == false) { sender.sendMessage(mm.getPrefix() + mm.getMessage("no-permission")); return; }
         plugin.reloadConfig();
         plugin.getMessageManager().loadMessages();
-        sender.sendMessage(mm.getPrefix() + "§aConfiguracoes e mensagens recarregadas!");
-        plugin.getWebhookManager().announce("&aAH recarregado com sucesso!", ":arrows_counterclockwise: AH recarregado com sucesso!");
+        sender.sendMessage(mm.getPrefix() + "§aAH successfully reloaded!");
+        plugin.getWebhookManager().announce("&aAH reloaded successfully!", ":arrows_counterclockwise: AH reloaded successfully!");
     }
     private void handleAdminRemove(Player p, String[] args) {
         if (p.hasPermission("ah.admin") == false) { p.sendMessage(mm.getPrefix() + mm.getMessage("no-permission")); return; }
-        if (args.length != 2) { p.sendMessage(mm.getPrefix() + "§cUse: /ah remove <jogador>"); return; }
+        if (args.length != 2) { p.sendMessage(mm.getPrefix() + "§cUsage: /ah remove <player>"); return; }
         OfflinePlayer target = Bukkit.getOfflinePlayer(args[1]);
         List<AuctionItem> all = plugin.getAuctionManager().getByCategory("cat-protection");
         all.addAll(plugin.getAuctionManager().getActiveAuctions());
         List<AuctionItem> toMove = new ArrayList<>();
         for (AuctionItem item : all) { if (item.getSellerUUID().equals(target.getUniqueId())) toMove.add(item); }
-        if (toMove.isEmpty()) { p.sendMessage(mm.getPrefix() + "§cSem itens ativos."); return; }
+        if (toMove.isEmpty()) { p.sendMessage(mm.getPrefix() + "§cNo active items found."); return; }
         for (AuctionItem item : toMove) { plugin.getExpiredManager().addExpiredItem(target.getUniqueId(), item); plugin.getAuctionManager().removeItem(item); }
-        p.sendMessage(mm.getPrefix() + "§eItens de " + args[1] + " movidos para expirados.");
+        p.sendMessage(mm.getPrefix() + "§eItems moved to expired storage.");
     }
     private void handleSellBlocks(Player p, String[] args) {
-        if (args.length != 3) { p.sendMessage(mm.getPrefix() + "§cUse: /ah sellblocks <quantidade> <preco>"); return; }
+        if (args.length != 3) { p.sendMessage(mm.getPrefix() + "§cUsage: /ah sellblocks <amount> <price>"); return; }
         try {
             int amount = Integer.parseInt(args[1]);
             double price = Double.parseDouble(args[2]);
             int playerBlocks = plugin.getClaimBlockManager().getBonusBlocks(p.getUniqueId());
-            if (amount > playerBlocks) { p.sendMessage(mm.getPrefix() + "§cVoce nao tem " + amount + " blocos!"); return; }
+            if (amount > playerBlocks) { p.sendMessage(mm.getPrefix() + "§cYou don't have enough blocks!"); return; }
             double min = amount * 10.0; double max = amount * 100.0;
-            if (min > price || price > max) { p.sendMessage(mm.getPrefix() + "§cPreco deve estar entre " + (int)min + " e " + (int)max); return; }
-            ItemStack item = new ItemBuilder(Material.GOLDEN_SHOVEL).setName("§6" + amount + " Blocos de Protecao").setLore("§7Vendedor: §f" + p.getName(), "§7Preco: §a$" + (int)price).build();
+            if (min > price || price > max) { p.sendMessage(mm.getPrefix() + "§cPrice must be between " + (int)min + " and " + (int)max); return; }
+            ItemStack item = new ItemBuilder(Material.GOLDEN_SHOVEL).setName(amount + " Blocos de Protecao").setLore("§7Seller: §f" + p.getName(), "§7Price: §a$" + (int)price).build();
             plugin.getAuctionManager().listItem(p.getUniqueId(), item, price, "cat-protection");
             plugin.getClaimBlockManager().removeBonusBlocks(p.getUniqueId(), amount);
             String msg = "&f" + p.getName() + " &eadicionou &f" + amount + " blocos de protecao &aa venda no auction house por &a$" + (int)price;
-            plugin.getWebhookManager().announce(msg, ":shield: " + p.getName() + " adicionou " + amount + " blocos por $" + (int)price);
-        } catch (Exception e) { p.sendMessage(mm.getPrefix() + "§cErro ao processar venda."); }
+            plugin.getWebhookManager().announce(msg, ":shield: " + p.getName() + " added " + amount + " blocks for $" + (int)price);
+        } catch (Exception e) { p.sendMessage(mm.getPrefix() + "§cInvalid numbers."); }
     }
     private void handleSell(Player p, String[] args) {
-        if (args.length != 2) { p.sendMessage(mm.getPrefix() + "§cUse: /ah sell <preco>"); return; }
+        if (args.length != 2) { p.sendMessage(mm.getPrefix() + "§cUsage: /ah sell <price>"); return; }
         ItemStack item = p.getInventory().getItemInMainHand();
         if (item == null || item.getType() == Material.AIR) { p.sendMessage(mm.getPrefix() + mm.getMessage("item-error")); return; }
         try {
@@ -83,8 +83,8 @@ public class AuctionCommand implements CommandExecutor {
             String itemName = item.hasItemMeta() && item.getItemMeta().hasDisplayName() ? item.getItemMeta().getDisplayName() : item.getType().name();
             p.getInventory().setItemInMainHand(null);
             String msg = "&f" + p.getName() + " &eadicionou &f" + itemName + " &aa venda no auction house por &a$" + (int)price;
-            plugin.getWebhookManager().announce(msg, ":shopping_cart: " + p.getName() + " adicionou " + itemName + " por $" + (int)price);
-        } catch (Exception e) { p.sendMessage(mm.getPrefix() + "§cPreco invalido."); }
+            plugin.getWebhookManager().announce(msg, ":shopping_cart: " + p.getName() + " added " + itemName + " for $" + (int)price);
+        } catch (Exception e) { p.sendMessage(mm.getPrefix() + "§cInvalid price."); }
     }
     private void handleMenus(Player p, String sub) {
         HistoryMenu h = new HistoryMenu(plugin);
