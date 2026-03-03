@@ -1,7 +1,7 @@
 # AH - Advanced Auction House (Modular)
 
 > [!CAUTION]
-> **DEVELOPMENT ALERT:** This is the first build (v1.0). It is natural to encounter bugs during this early stage. As time permits, the plugin will be improved and new integrations will be added.
+> **DEVELOPMENT ALERT:** This is the complex new project is natural to encounter bugs during this early stage. As time permits, the plugin will be improved and new integrations will be added.
 
 A high-performance, modular Auction House plugin for Minecraft **1.21.1+ (Paper/Spigot)**. This plugin features automated category detection, advanced search, full transaction history, and unique protection block trading.
 
