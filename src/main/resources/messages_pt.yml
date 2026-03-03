@@ -1,0 +1,48 @@
+# AH Plugin - Mensagens em Português
+prefix: "&e[AH] &r"
+no-permission: "&cVocê não tem permissão para usar este comando."
+only-players: "&cApenas jogadores podem executar este comando."
+invalid-price: "&cPor favor, insira um preço numérico válido."
+item-added: "&aItem adicionado com sucesso ao leilão!"
+item-error: "&cVocê precisa estar segurando um item na mão."
+
+# Títulos de Menu
+menu-categories: "&8Auction House - Categorias"
+menu-sales: "&8Minhas Vendas"
+menu-purchases: "&8Minhas Compras"
+menu-active: "&8Leilões Ativos"
+menu-expired: "&8Itens Expirados"
+
+# Nomes de Botões
+button-sold: "&eItens Vendidos"
+button-auctioned: "&eItens Leiloados"
+button-purchased: "&eItens Comprados"
+button-my-auctions: "&eMeus Leilões"
+button-cancelled: "&eItens Cancelados ou Expirados"
+button-back: "&cVoltar ao Menu"
+button-all: "&eTodos os leilões!"
+button-search: "&ePesquisa"
+
+# Lores de Botões
+lore-sold: "&aClique para ver seus itens vendidos."
+lore-auctioned: "&aClique para ver seus itens leiloados."
+lore-purchased: "&aClique para ver seus itens comprados."
+lore-my-auctions: "&aClique para ver seus itens à venda."
+lore-cancelled: "&aClique para ver itens cancelados ou expirados."
+lore-search: "&7Digite o ID ou nome do item."
+
+# Categorias
+cat-cash: "&6Cash"
+cat-keys: "&6Chaves"
+cat-protection: "&6Blocos de Proteção"
+cat-blocks: "&6Blocos"
+cat-items: "&6Itens"
+cat-tools: "&6Ferramentas"
+cat-armor: "&6Armaduras"
+cat-food: "&6Comidas"
+cat-books: "&6Livros"
+cat-spawners: "&6Geradores"
+cat-drops: "&6Drops de Mobs"
+cat-shulker: "&6Shulker Boxes"
+cat-farm: "&6Fazenda"
+cat-ores: "&6Minérios"

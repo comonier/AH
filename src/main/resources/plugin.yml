@@ -1,0 +1,15 @@
+name: AH
+version: '1.0'
+main: com.comonier.ah.AH
+api-version: '1.21'
+author: Comonier
+description: Plugin de Auction House modular.
+depend: [Vault]
+commands:
+  ah:
+    description: Comando principal da Auction House.
+    aliases: [leilao, auctionhouse]
+permissions:
+  ah.use:
+    description: Permite usar o /ah
+    default: true
