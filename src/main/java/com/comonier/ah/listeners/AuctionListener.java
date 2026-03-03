@@ -22,24 +22,31 @@ public class AuctionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        String title = event.getView().getTitle();
-        if (!title.contains("Auction") && !title.contains("AH") && !title.contains("Leilão")) return;
+        // TRAVA MÁXIMA: Se o dono do inventário for o nosso MenuManager, CANCELA TUDO.
+        if (!(event.getInventory().getHolder() instanceof MenuManager)) return;
+
         event.setCancelled(true);
         if (!(event.getWhoClicked() instanceof Player)) return;
         Player p = (Player) event.getWhoClicked();
         int slot = event.getRawSlot();
+        String title = event.getView().getTitle();
+
         if (slot < 0 || slot >= event.getInventory().getSize()) return;
 
         if (slot == 49) { categoryMenu.open(p); return; }
         if (slot == 13) { new ActiveAuctionsMenu(plugin).open(p, 1, plugin.getAuctionManager().getActiveAuctions(), "Todos"); return; }
+        
         handleCategoryClick(p, slot);
         handleNav(p, slot);
+        
         if (title.contains("[") && slot < 45) handlePurchase(p, slot);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryDrag(InventoryDragEvent e) {
-        if (e.getView().getTitle().contains("AH")) e.setCancelled(true);
+        if (e.getInventory().getHolder() instanceof MenuManager) {
+            e.setCancelled(true);
+        }
     }
 
     private void handlePurchase(Player p, int slot) {
@@ -55,10 +62,9 @@ public class AuctionListener implements Listener {
         p.getInventory().addItem(a.getItemStack());
         plugin.getAuctionManager().removeItem(a);
         p.closeInventory();
-
-        String itemN = a.getItemStack().getType().name();
-        plugin.getWebhookManager().announce("&f" + p.getName() + " &ecomprou &f" + itemN + " &ede &f" + a.getSellerName(), 
-            ":moneybag: " + p.getName() + " comprou " + itemN + " de " + a.getSellerName());
+        
+        plugin.getWebhookManager().announce("&f" + p.getName() + " &ecomprou &f" + a.getItemStack().getType().name(), 
+            ":moneybag: " + p.getName() + " comprou de " + a.getSellerName());
     }
 
     private void handleCategoryClick(Player p, int slot) {

@@ -48,6 +48,7 @@ public class AH extends JavaPlugin {
     @Override
     public void onDisable() {
         if (auctionManager != null) auctionManager.saveToDatabase();
+        // Segurança máxima: Fecha o inventário de todos para evitar roubo visual
         Bukkit.getOnlinePlayers().forEach(p -> p.closeInventory());
         instance = null;
     }
