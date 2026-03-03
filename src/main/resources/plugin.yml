@@ -11,5 +11,8 @@ commands:
     aliases: [leilao, auctionhouse]
 permissions:
   ah.use:
-    description: Permite usar o /ah
+    description: Permite usar o /ah e comandos basicos.
     default: true
+  ah.admin:
+    description: Permite acessar funcoes de administrador como reload e remove.
+    default: op

@@ -1,37 +1,23 @@
-# AH Plugin - English Messages
 prefix: "&e[AH] &r"
 no-permission: "&cYou do not have permission to use this command."
-only-players: "&cThis command can only be executed by players."
-invalid-price: "&cPlease enter a valid numeric price."
-item-added: "&aItem successfully added to the Auction House!"
+only-players: "&cOnly players can execute this command."
+invalid-price: "&cPlease enter a valid price."
+item-added: "&aItem successfully added to the auction!"
 item-error: "&cYou must be holding an item in your hand."
-
-# Menu Titles
 menu-categories: "&8Auction House - Categories"
 menu-sales: "&8My Sales"
 menu-purchases: "&8My Purchases"
 menu-active: "&8Active Auctions"
 menu-expired: "&8Expired Items"
-
-# Button Names
 button-sold: "&eSold Items"
 button-auctioned: "&eAuctioned Items"
 button-purchased: "&ePurchased Items"
 button-my-auctions: "&eMy Auctions"
 button-cancelled: "&eCancelled or Expired Items"
 button-back: "&cBack to Menu"
-button-all: "&eAll Auctions!"
+button-all: "&eAll auctions!"
 button-search: "&eSearch"
-
-# Button Lores
-lore-sold: "&aClick to view your sold items."
-lore-auctioned: "&aClick to view your auctioned items."
-lore-purchased: "&aClick to view your purchased items."
-lore-my-auctions: "&aClick to view your items for sale."
-lore-cancelled: "&aClick to view cancelled or expired items."
-lore-search: "&7Type the ID or name of the item."
-
-# Categories
+lore-search: "&7Type the ID or item name in the chat."
 cat-cash: "&6Cash"
 cat-keys: "&6Keys"
 cat-protection: "&6Protection Blocks"

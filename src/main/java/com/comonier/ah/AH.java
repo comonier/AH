@@ -1,5 +1,4 @@
 package com.comonier.ah;
-
 import com.comonier.ah.commands.*;
 import com.comonier.ah.managers.*;
 import com.comonier.ah.menus.CategoryMenu;
@@ -7,7 +6,6 @@ import com.comonier.ah.listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
-
 public class AH extends JavaPlugin {
     private static AH instance;
     private MessageManager messageManager;
@@ -21,11 +19,11 @@ public class AH extends JavaPlugin {
     private ExpiredManager expiredManager;
     private WebhookManager webhookManager;
     private CategoryMenu categoryMenu;
-
+    private ClaimBlockManager claimBlockManager;
     @Override
     public void onEnable() {
         instance = this;
-        if (!getDataFolder().exists()) getDataFolder().mkdirs();
+        if (getDataFolder().exists() == false) getDataFolder().mkdirs();
         saveDefaultConfig();
         loadLanguageFiles();
         this.messageManager = new MessageManager(this);
@@ -38,28 +36,25 @@ public class AH extends JavaPlugin {
         this.webhookManager = new WebhookManager(this);
         this.auctionManager = new AuctionManager(this);
         this.taskManager = new TaskManager(this);
+        this.claimBlockManager = new ClaimBlockManager(this);
         this.categoryMenu = new CategoryMenu(menuManager, messageManager);
         getCommand("ah").setExecutor(new AuctionCommand(this, categoryMenu));
         getCommand("ah").setTabCompleter(new AuctionTabCompleter());
         getServer().getPluginManager().registerEvents(new AuctionListener(this, categoryMenu, searchManager), this);
         getServer().getPluginManager().registerEvents(new SearchListener(searchManager), this);
     }
-
     @Override
     public void onDisable() {
         if (auctionManager != null) auctionManager.saveToDatabase();
-        // Segurança máxima: Fecha o inventário de todos para evitar roubo visual
         Bukkit.getOnlinePlayers().forEach(p -> p.closeInventory());
         instance = null;
     }
-
     private void loadLanguageFiles() {
         for (String lang : new String[]{"en", "pt"}) {
             String f = "messages_" + lang + ".yml";
-            if (!(new File(getDataFolder(), f)).exists()) saveResource(f, false);
+            if (new File(getDataFolder(), f).exists() == false) saveResource(f, false);
         }
     }
-
     public static AH getInstance() { return instance; }
     public MessageManager getMessageManager() { return messageManager; }
     public MenuManager getMenuManager() { return menuManager; }
@@ -70,4 +65,5 @@ public class AH extends JavaPlugin {
     public PurchaseManager getPurchaseManager() { return purchaseManager; }
     public ExpiredManager getExpiredManager() { return expiredManager; }
     public WebhookManager getWebhookManager() { return webhookManager; }
+    public ClaimBlockManager getClaimBlockManager() { return claimBlockManager; }
 }
